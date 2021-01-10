@@ -1,24 +1,31 @@
 const server = require('express').Router();
-const { User } = require('../db');
+const { User, Order } = require('../db');
 
+//Ruta para crear usuario
 server.post('/', (req, res, next) => {
+    User.create({
+        email: req.body.email,
+        name: req.body.name,
+        surname: req.body.surname,
+        password: req.body.password
+    })
+    .then( user => {
+        Order.create({
+            status: "created",
+            price: 0,
+            quantity: 0,
+            userId: user.dataValues.id    
+        })
+    })
+    .then( order => {
+        res.status(201).send("Usuario creado con éxito")
+    })
+    .catch(error => {
+        console.log(error)
+        res.sendStatus(400)
+    })
+})
 
-    if(!req.body.email || !req.body.name || !req.body.surname || !req.body.password){ 
-        res.status(400)
-        .send('Cuidado! Faltan datos para poder crear un usuario')
-    } else {
-        User.create({
-            email: req.body.email,
-            name: req.body.name,
-            surname: req.body.surname,
-            password: req.body.password
-        })
-        .then(function (user) {
-            res.status(201)
-            res.send(user)
-        })
-        .catch(next);        
-    }
-});
+
 
 module.exports = server;
