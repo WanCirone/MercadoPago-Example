@@ -9,13 +9,21 @@ module.exports = (sequelize) => {
             type: DataTypes.ENUM('cart', 'created', 'processing', 'cancelled', 'completed'),
             allowNull: false
         },
-        price: { 
+        payment_id:{
             type: DataTypes.INTEGER,
-            allowNull: false,
+            defaultValue: 0
         },
-        quantity: { 
+        payment_status:{
+            type: DataTypes.STRING,
+            defaultValue: ""
+        },
+        external_reference: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            defaultValue: 0
+        },
+        merchant_order_id: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
         }
     });
 };
