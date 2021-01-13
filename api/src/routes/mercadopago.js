@@ -12,7 +12,7 @@ const { route } = require('./order');
 server.get("/", (req, res, next)=>{
   //const id_orden = req.query.id 
 
-  const id_orden= 3
+  const id_orden= 1
 
   // cargamos el carrido de la bd
   const carrito = [
@@ -77,28 +77,38 @@ server.get("/pagos/:id", (req, res)=>{
 })
 
 server.get("/pagos", (req, res)=>{
+  console.info("EN LA RUTA PAGOS ", req)
   const payment_id= req.query.payment_id
-  const status= req.query.status
+  const payment_status= req.query.status
   const external_reference = req.query.external_reference
   const merchant_order_id= req.query.merchant_order_id
+  console.log("EXTERNAL REFERENCE ", external_reference)
 
   //Aquí edito el status de mi orden
 
-  Order_detail.findByPk(external_reference)
+  Order.findByPk(external_reference)
   .then((order) => {
     order.payment_id= payment_id
-    order.payment_status= status
+    order.payment_status= payment_status
     order.merchant_order_id = merchant_order_id
-    return order.save()
-  }).then((_) => {
-    res.redirect("http://localhost:3000")
-  }).catch((err) =>{
-    console.log(err)
+    console.info('Salvando order')
+    order.save()
+    .then((_) => {
+      console.info('redirect success')
+      return res.redirect("http://localhost:3000")
+    }).catch((err) =>{
+      console.error('error al salvar', err)
+      return res.redirect(`http://localhost:3000/?error=${err}&where=al+salvar`)
+    })
+  }).catch(err =>{
+    console.error('error al buscar', err)
+    return res.redirect(`http://localhost:3000/?error=${err}&where=al+buscar`)
   })
+
 
   //proceso los datos del pago 
   // redirijo de nuevo a react con mensaje de exito, falla o pendiente
-  res.send(`${payment_id} ${status} ${external_reference} ${merchant_order_id} `)
+  //res.send(`${payment_id} ${payment_status} ${external_reference} ${merchant_order_id} `)
 })
 
 
