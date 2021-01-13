@@ -91,10 +91,12 @@ server.get("/pagos", (req, res)=>{
     order.payment_id= payment_id
     order.payment_status= payment_status
     order.merchant_order_id = merchant_order_id
+    order.status = "created"
     console.info('Salvando order')
     order.save()
     .then((_) => {
       console.info('redirect success')
+      
       return res.redirect("http://localhost:3000")
     }).catch((err) =>{
       console.error('error al salvar', err)
