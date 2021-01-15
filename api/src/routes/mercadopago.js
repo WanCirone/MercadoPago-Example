@@ -1,6 +1,5 @@
 const { Order} = require('../db.js');
 const server = require('express').Router();
-const { route } = require('./order');
 
 // SDK de Mercado Pago
 const mercadopago = require ('mercadopago');
@@ -103,9 +102,9 @@ server.get("/pagos", (req, res)=>{
 })
 
 
-//Busco 
+//Busco información de una orden de pago
 server.get("/pagos/:id", (req, res)=>{
-  const mp = new mercadopago (ACCESS_TOKEN)
+  const mp = new mercadopago(ACCESS_TOKEN)
   const id = req.params.id
   console.info("Buscando el id", id)
   mp.get(`/v1/payments/search`, {'status': 'pending'}) //{"external_reference":id})
