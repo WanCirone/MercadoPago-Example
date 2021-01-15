@@ -1,6 +1,6 @@
 import './App.css'
 import { useEffect, useState } from 'react'
-import Comprar from './components/Comprar.jsx'
+import Checkout from './components/Checkout.jsx'
 import axios from 'axios'
 
 function App() {
@@ -12,7 +12,8 @@ function App() {
     .then((data)=>{
       setDatos(data.data)
       console.info('Contenido de data:', data)
-    }).catch(err => console.error(err)) 
+    })
+    .catch(err => console.error(err)) 
   },[])
 
 
@@ -25,7 +26,7 @@ function App() {
     <div className="App">
       { !datos
         ? <p>Aguarde un momento....</p> 
-        : <Comprar productos={productos} data={datos}/>
+        : <Checkout productos={productos} data={datos}/>
       }
     </div>
   );

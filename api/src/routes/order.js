@@ -1,7 +1,5 @@
 const server = require('express').Router();
-const { Order , Order_detail, Product, User} = require('../db');
-const { Op } = require("sequelize");
-const mercadopago = require("mercadopago");
+const { Order , Order_detail, Product } = require('../db');
 
 server.post('/', (req, res, next) => {
     const { userId, orderlines, status } = req.body
@@ -47,87 +45,17 @@ server.get('/detalle/:id', (req, res, next) => {
         where: {
           id: id,
         },
-            include: {
-                model: Order_detail,
-                     where: { orderId: id},
-                       }}).then(obj => {
-                    res.send(obj)
-                }).catch(next)
-              });
-
-
-// // Agrega credenciales
-// mercadopago.configure({
-//     sandbox: true,
-//     access_token: process.env.MELI_ACCESS_TOKEN,
-// });
-
-
-//Ruta para agregar producto al carrito
-server.post('/:idUser/cart', (req, res, next) => {
-    Order.findOne({
-        where: {
-            [Op.and]: [
-                { userId: req.params.idUser }, 
-                { status: 'created' } 
-            ]
+        include: {
+            model: Order_detail,
+            where: { orderId: id }
         }
     })
-    .then( order => {
-        const order_id  = order.dataValues.id;
-
-        order.update({
-            price: order.dataValues.price + (req.body.product_quantity * req.body.product_price),
-            quantity: order.dataValues.quantity + req.body.product_quantity
-        })
-        
-        Order_detail.findOne({
-            where: {
-                [Op.and]: [
-                    { productId: req.body.productId}, 
-                    { orderId: order.dataValues.id }
-                ]
-            }
-        })
-        .then( od => {
-            if(od) {
-                od.update({
-                    quantity: od.dataValues.quantity + req.body.product_quantity
-                })
-                return;
-            }
-            else {
-                Order_detail.create({
-                    price: req.body.product_price,
-                    quantity: req.body.product_quantity,
-                    productId: req.body.productId,  
-                    orderId: order_id   
-                })
-                return;
-            }
-        })
-        .then( detalle => {
-            res.status(200).send("Producto agregado al carrito con éxito");
-        })
-        .catch(error => {
-            res.sendStatus(400)
-        })
+    .then(obj => {
+        res.send(obj)
     })
-    
-})
-
-//Ruta que me trae todas las ordenes existentes con detalle
-server.get('/', (req, res, next) => { 
-    Order.findAll({
-        include: Order_detail 
-    })
-    .then(order => {
-        res.send(order);
-    })
-    .catch(error => {
-        console.log(error)
-        res.sendStatus(400)
-    })
+    .catch(next)
 });
+
+
 
 module.exports = server;

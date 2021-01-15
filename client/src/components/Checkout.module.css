@@ -1,0 +1,18 @@
+.products{
+    border-radius: 5px;
+    border: 1px solid rgb(209, 203, 200);
+    height: 130px;
+    width: 130px;
+    background-color: rgb(209, 203, 200);
+    margin: 25px;
+    display: inline-block;
+}
+
+.gridContainer{
+    text-align: center; 
+}
+
+.ul{
+    list-style-type: none;
+    padding-right: 50px;
+} 
